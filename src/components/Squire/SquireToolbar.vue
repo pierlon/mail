@@ -5,20 +5,29 @@
 				<button
 					v-if="action.type === 'button'"
 					v-show="isMode('html')"
+					:key="action.name"
 					:class="action.isActive ? action.name : ''"
 					type="button"
 					@click="onAction(action)"
 				>
 					<font-awesome-icon :icon="action.icon" />
 				</button>
-				<select v-else-if="action.type === 'select'" v-show="isMode('html')" v-model="action.current" @change="onAction(action)">
-					<option v-for="option in action.options" :value="option">{{ option.key }}</option>
+				<select
+					v-else-if="action.type === 'select'"
+					v-show="isMode('html')"
+					:key="action.name"
+					v-model="action.current"
+					@change="onAction(action)"
+				>
+					<option v-for="option in action.options" :key="option.value" :value="option">
+						{{ option.key }}
+					</option>
 				</select>
-				<div v-else-if="action.type === 'separator'" class="squireToolbar-separator"></div>
+				<div v-else-if="action.type === 'separator'" :key="action.name" class="squireToolbar-separator"></div>
 			</template>
 
 			<select v-model="mimeType" class="mode" @change="onMode">
-				<option v-for="type in mimeTypes" :value="type">{{ type.name }}</option>
+				<option v-for="type in mimeTypes" :key="type.type" :value="type">{{ type.name }}</option>
 			</select>
 		</div>
 	</nav>
