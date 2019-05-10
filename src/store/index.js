@@ -26,7 +26,7 @@ import Vuex from 'vuex'
 
 import {value} from '../util/undefined'
 
-import {UNIFIED_ACCOUNT_ID, UNIFIED_INBOX_ID, UNIFIED_INBOX_UID} from './constants'
+import {UNIFIED_ACCOUNT_ID, UNIFIED_INBOX_ID, UNIFIED_INBOX_UID, MIME_TYPES} from './constants'
 import actions from './actions'
 import mutations from './mutations'
 
@@ -78,6 +78,12 @@ export const getters = {
 	getMessageByUid: state => uid => {
 		return state.messages[uid]
 	},
+	getEditorMode: state => {
+		return state.editor.mimeType
+	},
+	isEditorMode: (state, getters) => type => {
+		return getters.getEditorMode.type === type
+	},
 }
 
 export default new Vuex.Store({
@@ -112,6 +118,10 @@ export default new Vuex.Store({
 		envelopes: {},
 		messages: {},
 		autocompleteEntries: [],
+		mimeTypes: MIME_TYPES,
+		editor: {
+			mimeType: MIME_TYPES.find(mime => mime.type === 'html'),
+		},
 	},
 	getters,
 	mutations,

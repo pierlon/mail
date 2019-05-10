@@ -87,7 +87,7 @@
 			{{ t('mail', 'Note that the mail came from a noreply address so	your reply will probably not be read.') }}
 		</div>
 		<div class="composer-fields">
-			<textarea
+			<!--<textarea
 				v-model="bodyVal"
 				v-autosize
 				name="body"
@@ -95,7 +95,8 @@
 				:placeholder="t('mail', 'Message …')"
 				@keyup="onInputChanged"
 				@keypress="onBodyKeyPress"
-			></textarea>
+			></textarea>-->
+			<SquireEditor></SquireEditor>
 		</div>
 		<div class="submit-message-wrapper">
 			<input class="submit-message send primary" type="submit" :value="submitButtonTitle" @click="onSend" />
@@ -132,6 +133,7 @@ import {findRecipient} from '../service/AutocompleteService'
 import Loading from './Loading'
 import Logger from '../logger'
 import ComposerAttachments from './ComposerAttachments'
+import SquireEditor from './Squire/SquireEditor'
 
 const debouncedSearch = debouncePromise(findRecipient, 500)
 
@@ -151,6 +153,7 @@ export default {
 		ComposerAttachments,
 		Loading,
 		Multiselect,
+		SquireEditor,
 	},
 	props: {
 		replyTo: {
@@ -400,8 +403,7 @@ export default {
 #to,
 #cc,
 #bcc,
-input.subject,
-textarea.message-body {
+input.subject {
 	padding: 12px;
 	margin: 0;
 }
@@ -412,20 +414,13 @@ textarea.message-body {
 
 input.cc,
 input.bcc,
-input.subject,
-textarea.message-body {
+input.subject {
 	border-top: none;
 }
 
 input.subject {
 	font-size: 20px;
 	font-weight: 300;
-}
-
-textarea.message-body {
-	min-height: 300px;
-	resize: none;
-	padding-right: 25%;
 }
 
 #draft-status {

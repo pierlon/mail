@@ -200,4 +200,7 @@ export default {
 	removeMessage(state, {accountId, folderId, id}) {
 		Vue.delete(state.messages, accountId + '-' + folderId + '-' + id)
 	},
+	editorMode(state, mimeType) {
+		state.editor.mimeType = mimeType
+	},
 }
