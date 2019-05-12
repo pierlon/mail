@@ -23,7 +23,7 @@ export const UNIFIED_ACCOUNT_ID = 0
 export const UNIFIED_INBOX_ID = btoa('inbox')
 export const UNIFIED_INBOX_UID = UNIFIED_ACCOUNT_ID + '-' + UNIFIED_INBOX_ID
 
-export const MIME_TYPES = [
-	{type: 'html', mime: 'text/html', name: 'HTML'},
-	{type: 'plain', mime: 'text/plain', name: 'Text'},
-]
+export const MIME_TYPES = {
+	HTML: {type: 'text/html', name: 'HTML'},
+	PLAIN: {type: 'text/plain', name: 'Text'},
+}

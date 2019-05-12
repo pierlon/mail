@@ -1,35 +1,43 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 	<nav class="squireToolbar-container menu">
 		<div class="squireToolbar">
-			<template v-for="action in actions">
+			<div v-for="action in actions" v-show="editorMode === mimeTypes.HTML" :key="action.name">
 				<button
 					v-if="action.type === 'button'"
-					v-show="isMode('html')"
-					:key="action.name"
 					:class="action.isActive ? action.name : ''"
 					type="button"
 					@click="onAction(action)"
 				>
 					<font-awesome-icon :icon="action.icon" />
 				</button>
-				<select
-					v-else-if="action.type === 'select'"
-					v-show="isMode('html')"
-					:key="action.name"
-					v-model="action.current"
-					@change="onAction(action)"
-				>
+				<select v-else-if="action.type === 'select'" v-model="action.current" @change="onAction(action)">
 					<option v-for="option in action.options" :key="option.value" :value="option">
 						{{ option.key }}
 					</option>
 				</select>
-				<div v-else-if="action.type === 'separator'" :key="action.name" class="squireToolbar-separator"></div>
-			</template>
+				<div v-else-if="action.type === 'separator'" class="squireToolbar-separator"></div>
+			</div>
 
 			<select v-model="mimeType" class="mode" @change="onMode">
-				<option v-for="type in mimeTypes" :key="type.type" :value="type">{{ type.name }}</option>
+				<option v-for="(mime, key) in mimeTypes" :key="key" :value="mime">{{ mime.name }}</option>
 			</select>
 		</div>
+
+		<modal :title="linkModal.title" :visible.sync="linkModal.enabled">
+			<link-content :url.sync="linkUrl" />
+
+			<template v-slot:actions>
+				<button
+					v-for="(action, key) in linkModal.actions"
+					:key="key"
+					class="primary"
+					:disabled="action.disabled"
+					@click="action.onClick"
+				>
+					{{ upperFirst(key) }}
+				</button>
+			</template>
+		</modal>
 	</nav>
 </template>
 
@@ -55,17 +63,40 @@ import {
 	faUndoAlt,
 } from '@fortawesome/free-solid-svg-icons/index'
 
+import Modal from './Modal'
+import LinkContent from './LinkContent'
+
 export default {
 	name: 'SquireToolbar',
 	components: {
 		FontAwesomeIcon,
+		Modal,
+		LinkContent,
 	},
 	props: {
-		editor: Object,
+		editor: {
+			type: Object,
+			required: true,
+		},
 	},
 	data() {
 		return {
 			mimeType: null,
+			linkUrl: '',
+			linkModal: {
+				enabled: false,
+				title: 'Insert Link',
+				actions: {
+					remove: {
+						disabled: true,
+						onClick: this.onRemoveLink,
+					},
+					insert: {
+						disabled: true,
+						onClick: this.onInsertLink,
+					},
+				},
+			},
 			actions: [
 				{
 					name: 'fontSize',
@@ -177,9 +208,13 @@ export default {
 		},
 		...mapState(['mimeTypes']),
 		...mapGetters({
-			isMode: 'isEditorMode',
 			editorMode: 'getEditorMode',
 		}),
+	},
+	watch: {
+		linkUrl(val) {
+			this.linkModal.actions.insert.disabled = val === ''
+		},
 	},
 	created() {
 		this.mimeType = this.editorMode
@@ -195,13 +230,19 @@ export default {
 	},
 	methods: {
 		onAction(action) {
-			console.log(action)
-			const method = this.getEditorMethod(action)
-			const value = this.getActionValue(action)
+			if (this.shouldToggleModal(action.name)) {
+				this[`show${upperFirst(action.name)}Modal`]()
+			} else {
+				const method = this.getEditorMethod(action)
+				const value = this.getActionValue(action)
 
-			console.log(method, value)
+				this.editor[method](value)
+			}
+		},
+		shouldToggleModal(action) {
+			const actions = ['link']
 
-			this.editor[method](value)
+			return actions.includes(action)
 		},
 		getEditorMethod({name, type, isActive = false}) {
 			switch (true) {
@@ -229,6 +270,41 @@ export default {
 					return null
 			}
 		},
+		setPathListener() {
+			this.editor.addEventListener('pathChange', this.onPathChange)
+		},
+		showLinkModal() {
+			this.linkUrl = this.getSelectedLink()
+
+			this.linkModal.actions.remove.disabled = this.linkUrl === ''
+
+			this.linkModal.enabled = true
+		},
+		getSelectedLink() {
+			let node = this.editor.getSelection().startContainer.parentNode
+
+			while (node !== null) {
+				if (node.tagName === 'A') {
+					return node.href
+				}
+
+				node = node.parentNode
+			}
+
+			return ''
+		},
+		onInsertLink() {
+			this.linkModal.enabled = false
+			this.editor.makeLink(this.linkUrl, {
+				target: '_blank',
+				title: this.linkUrl,
+				rel: 'nofollow',
+			})
+		},
+		onRemoveLink() {
+			this.linkModal.enabled = false
+			this.editor.removeLink()
+		},
 		onPathChange() {
 			const path = this.editor.getPath()
 
@@ -241,12 +317,12 @@ export default {
 				})
 			}
 		},
-		setPathListener() {
-			this.editor.addEventListener('pathChange', this.onPathChange)
-		},
 		onMode() {
 			this.$store.commit('editorMode', this.mimeType)
+
+			if (this.mimeType === this.mimeTypes.HTML) this.editor.focus()
 		},
+		upperFirst,
 	},
 }
 </script>

@@ -5,8 +5,8 @@
 				<squire-toolbar :editor="editor" />
 			</div>
 
-			<textarea v-show="isMode('plain')"></textarea>
-			<div v-show="isMode('html')" class="squire-wrapper">
+			<textarea v-show="mode === mimeTypes.PLAIN"></textarea>
+			<div v-show="mode === mimeTypes.HTML" class="squire-wrapper">
 				<iframe ref="iframe" :tabindex="ignoreTab" class="message-body"></iframe>
 			</div>
 		</div>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import {mapGetters, mapState} from 'vuex'
 import Squire from 'squire-rte'
 
 import SquireToolbar from './SquireToolbar'
@@ -32,11 +32,11 @@ export default {
 	},
 	computed: {
 		ignoreTab() {
-			return this.isMode('plain') ? -1 : 0
+			return this.mode === this.mimeTypes.PLAIN ? -1 : 0
 		},
+		...mapState(['mimeTypes']),
 		...mapGetters({
 			mode: 'getEditorMode',
-			isMode: 'isEditorMode',
 		}),
 	},
 	mounted() {

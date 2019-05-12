@@ -62,6 +62,7 @@ module.exports = {
 		symlinks: false,
 		alias: {
 			'~': __dirname,
+			'@': path.resolve(__dirname, 'src'),
 		},
 	}
 };

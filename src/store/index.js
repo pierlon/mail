@@ -81,9 +81,6 @@ export const getters = {
 	getEditorMode: state => {
 		return state.editor.mimeType
 	},
-	isEditorMode: (state, getters) => type => {
-		return getters.getEditorMode.type === type
-	},
 }
 
 export default new Vuex.Store({
@@ -120,7 +117,7 @@ export default new Vuex.Store({
 		autocompleteEntries: [],
 		mimeTypes: MIME_TYPES,
 		editor: {
-			mimeType: MIME_TYPES.find(mime => mime.type === 'html'),
+			mimeType: MIME_TYPES.HTML,
 		},
 	},
 	getters,
