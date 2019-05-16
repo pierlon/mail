@@ -1,21 +1,29 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
 	<nav class="squireToolbar-container menu">
 		<div class="squireToolbar">
-			<div v-for="action in actions" v-show="editorMode === mimeTypes.HTML" :key="action.name">
-				<button
-					v-if="action.type === 'button'"
-					:class="action.isActive ? action.name : ''"
-					type="button"
-					@click="onAction(action)"
-				>
-					<font-awesome-icon :icon="action.icon" />
-				</button>
-				<select v-else-if="action.type === 'select'" v-model="action.current" @change="onAction(action)">
-					<option v-for="option in action.options" :key="option.value" :value="option">
-						{{ option.key }}
-					</option>
-				</select>
-				<div v-else-if="action.type === 'separator'" class="squireToolbar-separator"></div>
+			<div
+				class="squireToolbar"
+				v-for="(actionGroup, idx) in actions"
+				v-show="editorMode === mimeTypes.HTML"
+				:key="idx"
+			>
+				<div v-for="action in actionGroup" :key="action.name">
+					<button
+						v-if="action.type === 'button'"
+						:class="action.isActive ? action.name : ''"
+						type="button"
+						@click="onAction(action)"
+					>
+						<font-awesome-icon :icon="action.icon" />
+					</button>
+					<select v-else-if="action.type === 'select'" v-model="action.selected" @change="onAction(action)">
+						<option v-for="(option, key) in action.options" :key="key" :value="option">
+							{{ key }}
+						</option>
+					</select>
+				</div>
+
+				<div v-if="idx < actions.length - 1" class="squireToolbar-separator"></div>
 			</div>
 
 			<select v-model="mimeType" class="mode" @change="onMode">
@@ -45,26 +53,10 @@
 import {mapGetters, mapState} from 'vuex'
 import {upperFirst} from 'lodash'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome/index'
-import {
-	faAlignLeft,
-	faAlignCenter,
-	faAlignRight,
-	faBold,
-	faEraser,
-	faFont,
-	faImage,
-	faItalic,
-	faLink,
-	faListUl,
-	faListOl,
-	faQuoteRight,
-	faRedoAlt,
-	faUnderline,
-	faUndoAlt,
-} from '@fortawesome/free-solid-svg-icons/index'
 
 import Modal from './Modal'
 import LinkContent from './LinkContent'
+import {SQUIRE_ACTIONS} from '@/store/constants'
 
 export default {
 	name: 'SquireToolbar',
@@ -97,114 +89,18 @@ export default {
 					},
 				},
 			},
-			actions: [
-				{
-					name: 'fontSize',
-					type: 'select',
-					current: {key: 14, value: '14px'},
-					options: [
-						{key: 10, value: '10px'},
-						{key: 12, value: '12px'},
-						{key: 14, value: '14px'},
-						{key: 16, value: '16px'},
-						{key: 18, value: '18px'},
-						{key: 20, value: '20px'},
-						{key: 22, value: '22px'},
-						{key: 24, value: '24px'},
-						{key: 26, value: '26px'},
-					],
-				},
-				{
-					name: 'fontFace',
-					type: 'select',
-					current: {key: 'Arial', value: 'arial'},
-					options: [
-						{key: 'Georgia', value: 'georgia'},
-						{key: 'Arial', value: 'arial'},
-						{key: 'Helvetica', value: 'helvetica'},
-						{key: 'Monospace', value: 'menlo, consolas, courier new, monospace'},
-						{key: 'Tahoma', value: 'tahoma, sans-serif'},
-						{key: 'Verdana', value: 'verdana'},
-						{key: 'Times New Roman', value: 'times new roman'},
-						{key: 'Trebuchet MS', value: 'trebuchet ms'},
-					],
-				},
-
-				{type: 'separator'},
-
-				{name: 'bold', type: 'button', icon: faBold, format: 'B', isActive: false},
-				{name: 'italic', type: 'button', icon: faItalic, format: 'I', isActive: false},
-				{name: 'underline', type: 'button', icon: faUnderline, format: 'U', isActive: false},
-
-				{type: 'separator'},
-
-				{name: 'unorderedList', type: 'button', icon: faListUl, format: 'UL', isActive: false},
-				{name: 'orderedList', type: 'button', icon: faListOl, format: 'OL', isActive: false},
-
-				{type: 'separator'},
-
-				// TODO: makeLink
-				{name: 'link', type: 'button', icon: faLink, format: 'A', isActive: false},
-				// TODO: insertImage
-				{name: 'image', type: 'button', icon: faImage, format: 'IMG', isActive: false},
-
-				{type: 'separator'},
-
-				{
-					name: 'alignLeft',
-					type: 'button',
-					icon: faAlignLeft,
-					format: 'DIV.align-left',
-					isActive: false,
-					value: 'left',
-				},
-				{
-					name: 'alignCenter',
-					type: 'button',
-					icon: faAlignCenter,
-					format: 'DIV.align-center',
-					isActive: false,
-					value: 'center',
-				},
-				{
-					name: 'alignRight',
-					type: 'button',
-					icon: faAlignRight,
-					format: 'DIV.align-right',
-					isActive: false,
-					value: 'right',
-				},
-
-				{type: 'separator'},
-
-				{name: 'quote', type: 'button', icon: faQuoteRight, format: 'BLOCKQUOTE', isActive: false},
-
-				{type: 'separator'},
-
-				{name: 'undo', type: 'button', icon: faUndoAlt},
-				{name: 'redo', type: 'button', icon: faRedoAlt},
-				{type: 'separator'},
-
-				{name: 'eraser', type: 'button', icon: faEraser},
-
-				{type: 'separator'},
-
-				// TODO: color picker for font and background
-				{name: 'color', type: 'button', icon: faFont, format: 'A', isActive: false},
-			],
+			actions: SQUIRE_ACTIONS,
 		}
 	},
 	computed: {
-		formats() {
-			const formats = []
-
-			this.actions.forEach(action => {
-				if (action.type === 'button' && action.hasOwnProperty('format')) {
-					formats.push(action.format)
-				}
-			})
-
-			return formats
+		fontSize() {
+			return this.flattenedActions.find(action => action.name === 'fontSize')
+		},
+		fontFace() {
+			return this.flattenedActions.find(action => action.name === 'fontFace')
+		},
+		flattenedActions() {
+			return this.actions.reduce((a, b) => a.concat(b))
 		},
 		...mapState(['mimeTypes']),
 		...mapGetters({
@@ -220,11 +116,8 @@ export default {
 		this.mimeType = this.editorMode
 	},
 	mounted() {
-		const fontSize = this.actions.find(action => action.name === 'fontSize').current.value
-		const fontFace = this.actions.find(action => action.name === 'fontFace').current.value
-
-		this.editor.setFontSize(`${fontSize}`)
-		this.editor.setFontFace(`${fontFace}`)
+		this.editor.setFontSize(this.fontSize.selected)
+		this.editor.setFontFace(this.fontFace.selected)
 
 		this.setPathListener()
 	},
@@ -263,7 +156,7 @@ export default {
 		getActionValue(action) {
 			switch (true) {
 				case action.type === 'select':
-					return action.current.value
+					return action.selected
 				case /^align(Left|Center|Right)$/.test(action.name):
 					return action.value
 				default:
@@ -307,12 +200,22 @@ export default {
 		},
 		onPathChange() {
 			const path = this.editor.getPath()
+			const fontInfo = this.editor.getFontInfo()
 
 			if (path !== '(selection)') {
-				// only deal with tags that we use
-				const activeTags = path.split('>').filter(tag => this.formats.includes(tag))
+				if (fontInfo.size !== undefined) {
+					this.fontSize.selected = fontInfo.size
+				}
 
-				this.actions.forEach(action => {
+				if (fontInfo.family !== undefined) {
+					this.fontFace.selected = /(.+), sans-serif/.exec(fontInfo.family)[1].replace(/"/g, '')
+				}
+
+				const activeTags = path.split('>').filter(tag => {
+					return /^BLOCKQUOTE$|^I$|^U$|^B$|^UL$|^OL$|^LI$|.align-(center|left|right)$/.test(tag)
+				})
+
+				this.flattenedActions.forEach(action => {
 					action.isActive = activeTags.includes(action.format)
 				})
 			}
@@ -348,15 +251,15 @@ export default {
 	background: #acb0bf;
 }
 
-.squireToolbar-container button.alignLeft,
-.squireToolbar-container button.alignCenter,
-.squireToolbar-container button.alignRight,
-.squireToolbar-container button.bold,
-.squireToolbar-container button.italic,
-.squireToolbar-container button.underline,
-.squireToolbar-container button.unorderedList,
-.squireToolbar-container button.orderedList,
-.squireToolbar-container button.quote {
+button.alignLeft,
+button.alignCenter,
+button.alignRight,
+button.bold,
+button.italic,
+button.underline,
+button.unorderedList,
+button.orderedList,
+button.quote {
 	background: rgba(0, 0, 0, 0.3);
 }
 </style>
