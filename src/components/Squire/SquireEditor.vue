@@ -2,7 +2,7 @@
 	<div class="squire-container">
 		<div class="editor-container">
 			<div v-if="editor != null">
-				<squire-toolbar :editor="editor" />
+				<SquireToolbar :editor="editor" />
 			</div>
 
 			<textarea v-show="mode === mimeTypes.PLAIN"></textarea>

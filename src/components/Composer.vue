@@ -96,7 +96,7 @@
 				@keyup="onInputChanged"
 				@keypress="onBodyKeyPress"
 			></textarea>-->
-			<SquireEditor></SquireEditor>
+			<SquireEditor />
 		</div>
 		<div class="submit-message-wrapper">
 			<input class="submit-message send primary" type="submit" :value="submitButtonTitle" @click="onSend" />

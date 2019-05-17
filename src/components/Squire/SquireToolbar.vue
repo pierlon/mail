@@ -14,7 +14,7 @@
 						type="button"
 						@click="onAction(action)"
 					>
-						<font-awesome-icon :icon="action.icon" />
+						<FontAwesomeIcon :icon="action.icon" />
 					</button>
 					<select v-else-if="action.type === 'select'" v-model="action.selected" @change="onAction(action)">
 						<option v-for="(option, key) in action.options" :key="key" :value="option">
@@ -31,8 +31,8 @@
 			</select>
 		</div>
 
-		<modal :title="linkModal.title" :visible.sync="linkModal.enabled">
-			<link-content :url.sync="linkUrl" />
+		<Modal :title="linkModal.title" :visible.sync="linkModal.enabled">
+			<LinkContent :url.sync="linkUrl" />
 
 			<template v-slot:actions>
 				<button
@@ -45,7 +45,7 @@
 					{{ upperFirst(key) }}
 				</button>
 			</template>
-		</modal>
+		</Modal>
 	</nav>
 </template>
 
