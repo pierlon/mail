@@ -87,16 +87,7 @@
 			{{ t('mail', 'Note that the mail came from a noreply address so	your reply will probably not be read.') }}
 		</div>
 		<div class="composer-fields">
-			<!--<textarea
-				v-model="bodyVal"
-				v-autosize
-				name="body"
-				class="message-body"
-				:placeholder="t('mail', 'Message …')"
-				@keyup="onInputChanged"
-				@keypress="onBodyKeyPress"
-			></textarea>-->
-			<SquireEditor />
+			<Editor class="message-body" :body.sync="bodyVal" :placeholder="t('mail', 'Message …')" @send="onSend" />
 		</div>
 		<div class="submit-message-wrapper">
 			<input class="submit-message send primary" type="submit" :value="submitButtonTitle" @click="onSend" />
@@ -133,7 +124,8 @@ import {findRecipient} from '../service/AutocompleteService'
 import Loading from './Loading'
 import Logger from '../logger'
 import ComposerAttachments from './ComposerAttachments'
-import SquireEditor from './Squire/SquireEditor'
+import Editor from './Squire/Editor'
+import {MIME_TYPES} from '@/store/constants'
 
 const debouncedSearch = debouncePromise(findRecipient, 500)
 
@@ -153,7 +145,7 @@ export default {
 		ComposerAttachments,
 		Loading,
 		Multiselect,
-		SquireEditor,
+		Editor,
 	},
 	props: {
 		replyTo: {
@@ -214,6 +206,7 @@ export default {
 			selectTo: this.to,
 			selectCc: this.cc,
 			selectBcc: this.bcc,
+			MIME_TYPES,
 		}
 	},
 	computed: {
@@ -225,6 +218,11 @@ export default {
 		},
 		isReply() {
 			return !_.isUndefined(this.replyTo)
+		},
+	},
+	watch: {
+		bodyVal() {
+			this.onInputChanged()
 		},
 	},
 	beforeMount() {
@@ -293,12 +291,6 @@ export default {
 				.then(() => uploaded)
 				.catch(error => Logger.error('could not upload attachments', {error}))
 				.then(() => Logger.debug('attachments uploaded'))
-		},
-		onBodyKeyPress(event) {
-			// CTRL+Enter sends the message
-			if (event.keyCode === 13 && event.ctrlKey) {
-				return this.onSend()
-			}
 		},
 		onNewToAddr(addr) {
 			this.onNewAddr(addr, this.selectTo)

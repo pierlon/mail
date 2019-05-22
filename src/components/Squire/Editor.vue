@@ -1,12 +1,18 @@
 <template>
 	<div class="squire-container">
 		<div class="editor-container">
-			<div v-if="editor != null">
-				<SquireToolbar :editor="editor" />
-			</div>
+			<SquireToolbar v-if="editor != null" :editor="editor" :plain-editor="$refs.plainEditor" />
 
-			<textarea v-show="mode === mimeTypes.PLAIN"></textarea>
-			<div v-show="mode === mimeTypes.HTML" class="squire-wrapper">
+			<textarea
+				v-show="mode === MIME_TYPES.PLAIN"
+				ref="plainEditor"
+				class="message-body"
+				:placeholder="t('mail', 'Message …')"
+				@input="$emit('update:body', $event.target.value)"
+				@keyup.ctrl.enter="$emit('send')"
+			></textarea>
+			<div v-show="mode === MIME_TYPES.HTML" class="squire-wrapper">
+<!--				TODO: register key events-->
 				<iframe ref="iframe" :tabindex="ignoreTab" class="message-body"></iframe>
 			</div>
 		</div>
@@ -14,27 +20,34 @@
 </template>
 
 <script>
-import {mapGetters, mapState} from 'vuex'
+import {mapGetters} from 'vuex'
 import Squire from 'squire-rte'
 
 import SquireToolbar from './SquireToolbar'
+import {MIME_TYPES} from '@/store/constants'
 import iframeCss from '!!raw-loader!~/css/squire_iframe.css'
 
 export default {
-	name: 'SquireEditor',
+	name: 'Editor',
 	components: {
 		SquireToolbar,
+	},
+	props: {
+		body: {
+			type: String,
+			required: true,
+		},
 	},
 	data() {
 		return {
 			editor: null,
+			MIME_TYPES,
 		}
 	},
 	computed: {
 		ignoreTab() {
-			return this.mode === this.mimeTypes.PLAIN ? -1 : 0
+			return this.mode === MIME_TYPES.PLAIN ? -1 : 0
 		},
-		...mapState(['mimeTypes']),
 		...mapGetters({
 			mode: 'getEditorMode',
 		}),
@@ -90,6 +103,11 @@ export default {
 </script>
 
 <style scoped>
+.editor-container {
+	display: flex;
+	flex-direction: column;
+}
+
 .squire-container {
 	padding: 12px;
 	margin: 0;
@@ -103,5 +121,16 @@ export default {
 
 iframe.message-body {
 	width: 100%;
+}
+
+textarea {
+	max-width: none;
+	border: none;
+	border-radius: 0;
+	width: auto;
+}
+
+textarea.reply {
+	min-height: 100px;
 }
 </style>

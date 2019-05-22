@@ -4,7 +4,7 @@
 			<div
 				class="squireToolbar"
 				v-for="(actionGroup, idx) in actions"
-				v-show="editorMode === mimeTypes.HTML"
+				v-show="editorMode === MIME_TYPES.HTML"
 				:key="idx"
 			>
 				<div v-for="action in actionGroup" :key="action.name">
@@ -27,7 +27,7 @@
 			</div>
 
 			<select v-model="mimeType" class="mode" @change="onMode">
-				<option v-for="(mime, key) in mimeTypes" :key="key" :value="mime">{{ mime.name }}</option>
+				<option v-for="(mime, key) in MIME_TYPES" :key="key" :value="mime">{{ mime.name }}</option>
 			</select>
 		</div>
 
@@ -56,7 +56,7 @@ import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome/index'
 
 import Modal from './Modal'
 import LinkContent from './LinkContent'
-import {SQUIRE_ACTIONS} from '@/store/constants'
+import {MIME_TYPES, SQUIRE_ACTIONS} from '@/store/constants'
 
 export default {
 	name: 'SquireToolbar',
@@ -68,6 +68,10 @@ export default {
 	props: {
 		editor: {
 			type: Object,
+			required: true,
+		},
+		plainEditor: {
+			type: HTMLTextAreaElement,
 			required: true,
 		},
 	},
@@ -89,6 +93,7 @@ export default {
 					},
 				},
 			},
+			MIME_TYPES,
 			actions: SQUIRE_ACTIONS,
 		}
 	},
@@ -102,7 +107,6 @@ export default {
 		flattenedActions() {
 			return this.actions.reduce((a, b) => a.concat(b))
 		},
-		...mapState(['mimeTypes']),
 		...mapGetters({
 			editorMode: 'getEditorMode',
 		}),
@@ -223,7 +227,10 @@ export default {
 		onMode() {
 			this.$store.commit('editorMode', this.mimeType)
 
-			if (this.mimeType === this.mimeTypes.HTML) this.editor.focus()
+			// editor doesn't focus immediately, so we delay it
+			setTimeout(() => {
+				this.mimeType === MIME_TYPES.HTML ? this.editor.focus() : this.plainEditor.focus()
+			}, 100)
 		},
 		upperFirst,
 	},
@@ -231,6 +238,8 @@ export default {
 </script>
 
 <style scoped>
+/*TODO: break toolbar into rows using media query*/
+
 .squireToolbar {
 	display: flex;
 }
@@ -241,7 +250,6 @@ export default {
 	margin-right: 0.5em;
 	display: flex;
 	position: relative;
-	min-height: 34px;
 }
 
 .squireToolbar-separator {
