@@ -12,7 +12,6 @@
 				@keyup.ctrl.enter="$emit('send')"
 			></textarea>
 			<div v-show="mode === MIME_TYPES.HTML" class="squire-wrapper">
-<!--				TODO: register key events-->
 				<iframe ref="iframe" :tabindex="ignoreTab" class="message-body"></iframe>
 			</div>
 		</div>
@@ -111,6 +110,7 @@ export default {
 			this.setupListeners()
 		},
 		setupListeners() {
+			this.editor.addEventListener('input', () => this.$emit('update:body', this.editor.getHTML()))
 			this.editor.setKeyHandler(this.sendKeys, () => this.$emit('send'))
 		},
 	},
