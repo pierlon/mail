@@ -48,6 +48,10 @@ export default {
 		ignoreTab() {
 			return this.mode === MIME_TYPES.PLAIN ? -1 : 0
 		},
+		sendKeys() {
+			const ua = navigator.userAgent
+			return (/Mac OS X/.test(ua) ? 'meta-' : 'ctrl-') + 'enter'
+		},
 		...mapGetters({
 			mode: 'getEditorMode',
 		}),
@@ -104,6 +108,10 @@ export default {
 		},
 		onEditorLoaded(editor) {
 			this.editor = editor
+			this.setupListeners()
+		},
+		setupListeners() {
+			this.editor.setKeyHandler(this.sendKeys, () => this.$emit('send'))
 		},
 	},
 }
