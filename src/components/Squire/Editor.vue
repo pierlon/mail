@@ -87,10 +87,17 @@ export default {
 			style.setAttribute('type', 'text/css')
 			style.setAttribute('rel', 'stylesheet')
 
+			let _iframeCss = iframeCss
+
+			if (OCA.Accessibility.theme === 'themedark') {
+				const textColor = getComputedStyle(document.documentElement, null).getPropertyValue('--color-main-text')
+				_iframeCss = iframeCss.replace('color: #222', `color: ${textColor}`)
+			}
+
 			if (style.styleSheet) {
-				style.styleSheet.cssText = iframeCss
+				style.styleSheet.cssText = _iframeCss
 			} else {
-				style.appendChild(iframeDoc.createTextNode(iframeCss))
+				style.appendChild(iframeDoc.createTextNode(_iframeCss))
 			}
 
 			head.appendChild(style)
