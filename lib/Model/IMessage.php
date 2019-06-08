@@ -121,6 +121,16 @@ interface IMessage {
 	public function setContent(string $content);
 
 	/**
+	 * @return string
+	 */
+	public function getMimeType();
+
+	/**
+	 * @param string $mimeType
+	 */
+	public function setMimeType(string $mimeType);
+
+	/**
 	 * @return File[]
 	 */
 	public function getCloudAttachments(): array;

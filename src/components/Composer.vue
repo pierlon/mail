@@ -119,6 +119,7 @@ import Autosize from 'vue-autosize'
 import debouncePromise from 'debounce-promise'
 import Multiselect from 'nextcloud-vue/dist/Components/Multiselect'
 import Vue from 'vue'
+import {mapGetters} from 'vuex'
 
 import {findRecipient} from '../service/AutocompleteService'
 import Loading from './Loading'
@@ -219,6 +220,9 @@ export default {
 		isReply() {
 			return !_.isUndefined(this.replyTo)
 		},
+		...mapGetters({
+			mime: 'getEditorMode',
+		}),
 	},
 	watch: {
 		bodyVal() {
@@ -262,6 +266,7 @@ export default {
 					attachments: this.attachments,
 					folderId: this.replyTo ? this.replyTo.folderId : undefined,
 					messageId: this.replyTo ? this.replyTo.messageId : undefined,
+					mimeType: this.mime.type,
 				}
 			}
 		},

@@ -53,8 +53,12 @@ class NewMessageData {
 	/** @var array */
 	private $attachments;
 
+	/** @var string */
+	private $mimeType;
+
 	/**
 	 * @param Account $account
+	 * @param string $mimeType
 	 * @param AddressList $to
 	 * @param AddressList $cc
 	 * @param AddressList $bcc
@@ -63,6 +67,7 @@ class NewMessageData {
 	 * @param array $attachments
 	 */
 	public function __construct(Account $account,
+								string $mimeType,
 								AddressList $to,
 								AddressList $cc,
 								AddressList $bcc,
@@ -70,6 +75,7 @@ class NewMessageData {
 								string $body = null ,
 								array $attachments = []) {
 		$this->account = $account;
+		$this->mimeType = $mimeType;
 		$this->to = $to;
 		$this->cc = $cc;
 		$this->bcc = $bcc;
@@ -80,6 +86,7 @@ class NewMessageData {
 
 	/**
 	 * @param Account $account
+	 * @param string $mimeType
 	 * @param string|null $to
 	 * @param string|null $cc
 	 * @param string|null $bcc
@@ -89,6 +96,7 @@ class NewMessageData {
 	 * @return NewMessageData
 	 */
 	public static function fromRequest(Account $account,
+									   string $mimeType,
 									   string $to = null,
 									   string $cc = null,
 									   string $bcc = null,
@@ -100,7 +108,7 @@ class NewMessageData {
 		$bccList = AddressList::parse($bcc ?: '');
 		$attachmentsArray = is_null($attachments) ? [] : $attachments;
 
-		return new self($account, $toList, $ccList, $bccList, $subject, $body, $attachmentsArray);
+		return new self($account, $mimeType, $toList, $ccList, $bccList, $subject, $body, $attachmentsArray);
 	}
 
 	/**
@@ -150,6 +158,14 @@ class NewMessageData {
 	 */
 	public function getAttachments(): array {
 		return $this->attachments;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMimeType(): string
+	{
+		return $this->mimeType;
 	}
 
 }

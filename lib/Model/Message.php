@@ -34,6 +34,9 @@ class Message implements IMessage {
 
 	use ConvertAddresses;
 
+	public const MIME_HTML = 'text/html';
+	public const MIME_PLAIN = 'text/plain';
+
 	/** @var string */
 	private $subject = '';
 
@@ -63,6 +66,9 @@ class Message implements IMessage {
 
 	/** @var int[] */
 	private $localAttachments = [];
+
+	/** @var string */
+	private $mimeType;
 
 	public function __construct() {
 		$this->from = new AddressList();
@@ -192,6 +198,22 @@ class Message implements IMessage {
 	 */
 	public function setContent(string $content) {
 		$this->content = $content;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getMimeType(): string
+	{
+		return $this->mimeType;
+	}
+
+	/**
+	 * @param string $mimeType
+	 */
+	public function setMimeType(string $mimeType): void
+	{
+		$this->mimeType = $mimeType;
 	}
 
 	/**

@@ -563,6 +563,24 @@ class IMAPMessage implements IMessage, JsonSerializable {
 	}
 
 	/**
+	 * @return string
+	 * @throws Exception
+	 */
+	public function getMimeType()
+	{
+		throw new Exception('Not implemented');
+	}
+
+	/**
+	 * @param string $mimeType
+	 * @throws Exception
+	 */
+	public function setMimeType(string $mimeType)
+	{
+		throw new Exception('IMAP message is immutable');
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getCloudAttachments(): array {

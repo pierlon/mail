@@ -111,6 +111,7 @@ class MailTransmission implements IMailTransmission {
 		$message->setCC($messageData->getCc());
 		$message->setBcc($messageData->getBcc());
 		$message->setContent($messageData->getBody());
+		$message->setMimeType($messageData->getMimeType());
 		$this->handleAttachments($userId, $messageData, $message);
 
 		$transport = $this->clientFactory->create($account);
@@ -142,6 +143,7 @@ class MailTransmission implements IMailTransmission {
 		$imapMessage->setCC($message->getCc());
 		$imapMessage->setBcc($message->getBcc());
 		$imapMessage->setContent($message->getBody());
+		$imapMessage->setMimeType($message->getMimeType());
 
 		// create transport and save message
 		try {
