@@ -26,9 +26,10 @@ import {getLocale} from 'nextcloud-l10n'
 
 moment.locale(getLocale())
 
-export const buildReplyBody = (original, from, date) => {
-	const start = '\n\n'
-	const body = '\n> ' + original.replace(/\n/g, '\n> ')
+export const buildReplyBody = (original, from, date, isHtml) => {
+	const start = isHtml ? '<br><br>' : '\n\n'
+	console.log(`body is ${original}`)
+	const body = isHtml ? `<blockquote>${original}</blockquote>` : '\n> ' + original.replace(/\n/g, '\n> ')
 
 	if (from) {
 		const dateString = moment.unix(date).format('LLL')

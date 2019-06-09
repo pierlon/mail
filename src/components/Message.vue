@@ -151,9 +151,7 @@ export default {
 					})
 					this.replySubject = buildReplySubject(message.subject)
 
-					if (!message.hasHtmlBody) {
-						this.setReplyText(message.body)
-					}
+					this.setReplyText(message.body)
 
 					this.loading = false
 
@@ -175,14 +173,12 @@ export default {
 				})
 		},
 		setReplyText(text) {
-			const bodyText = htmlToText(text)
-
 			this.$store.commit('setMessageBodyText', {
 				uid: this.message.uid,
-				bodyText,
+				text,
 			})
 
-			this.replyBody = buildReplyBody(this.message.bodyText, this.message.from[0], this.message.dateInt)
+			this.replyBody = buildReplyBody(text, this.message.from[0], this.message.dateInt, this.message.hasHtmlBody)
 		},
 		onHtmlBodyLoaded(bodyString) {
 			this.setReplyText(bodyString)

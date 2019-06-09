@@ -107,6 +107,7 @@ export default {
 		},
 		onEditorLoaded(editor) {
 			this.editor = editor
+			this.editor.setHTML(this.body)
 			this.setupListeners()
 		},
 		setupListeners() {
