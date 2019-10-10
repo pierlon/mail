@@ -72,13 +72,13 @@
 </template>
 
 <script>
-	import Content from 'nextcloud-vue/dist/Components/Content'
-	import AppContent from 'nextcloud-vue/dist/Components/AppContent'
+	import Content from '@nextcloud/vue/dist/Components/Content'
+	import AppContent from '@nextcloud/vue/dist/Components/AppContent'
 	import Navigation from '../components/Navigation'
 	import SieveFilterSets from '../components/SieveFilterSets'
 	import {Tab, Tabs} from 'vue-tabs-component'
-	import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
-	import Actions from 'nextcloud-vue/dist/Components/Actions'
+	import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+	import Actions from '@nextcloud/vue/dist/Components/Actions'
 	import { ClipLoader } from '@saeris/vue-spinners'
 
 	export default {

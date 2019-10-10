@@ -54,8 +54,8 @@
 </template>
 
 <script>
-	import Actions from 'nextcloud-vue/dist/Components/Actions'
-	import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+	import Actions from '@nextcloud/vue/dist/Components/Actions'
+	import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 	import {sieveActionsBlueprint} from '../service/FiltersService'
 	import {translate as mailboxTranslator} from '../l10n/MailboxTranslator.js'
 	

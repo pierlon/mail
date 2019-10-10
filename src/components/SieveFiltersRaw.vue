@@ -52,8 +52,8 @@
 
 <script>
 	import Vue from 'vue'
-	import Actions from 'nextcloud-vue/dist/Components/Actions'
-	import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+	import Actions from '@nextcloud/vue/dist/Components/Actions'
+	import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 	import Autosize from 'vue-autosize'
 	import Logger from '../logger'
 

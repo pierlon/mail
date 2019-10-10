@@ -74,8 +74,8 @@
 </template>
 
 <script>
-	import Actions from 'nextcloud-vue/dist/Components/Actions'
-	import ActionButton from 'nextcloud-vue/dist/Components/ActionButton'
+	import Actions from '@nextcloud/vue/dist/Components/Actions'
+	import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 	import draggable from 'vuedraggable'
 	import Message from 'vue-m-message'
 	import SieveFilters from "./SieveFilters"

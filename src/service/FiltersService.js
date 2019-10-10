@@ -20,8 +20,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-import {generateUrl} from 'nextcloud-router'
-import HttpClient from 'nextcloud-axios'
+import {generateUrl} from '@nextcloud/router'
+import HttpClient from '@nextcloud/axios'
 
 const generateScriptsUrl = (accountId, path = null) => {
 	const url = `/apps/mail/api/accounts/{id}/scripts${path ? `/${path}` : ''}`
